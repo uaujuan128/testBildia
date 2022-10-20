@@ -28,7 +28,7 @@ Requisitos opcionales:
 ## Instalación
 Clonar el repositorio
 ````shell
-$ git clone git@github.com:crackencode/bildia.git
+$ git clone git@github.com:crackencode/bildia-tech-test.git
 ````
 
 Crear el archivo .env.local copiando .env (dejar las variables igual)
