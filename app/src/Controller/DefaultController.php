@@ -23,7 +23,7 @@ class DefaultController extends AbstractController
     /**
      * @throws Exception
      */
-    #[Route('/municipality/{cardinal}', name: 'nearestMunicipalityToCardinal', requirements: ['cardinal' => 'n|s|e|w'], methods: ['GET', 'HEAD'])]
+    #[Route('/municipality/{cardinal}', name: 'nearestMunicipalityToCardinal', requirements: ['cardinal' => 'n|s|e|w'], methods: ['GET'])]
     public function getNearestMunicipalityToCardinal(Request $request): JsonResponse
     {
         /* Example: http://localhost:8080/api/municipality/n?municipalities=[1,2] */
@@ -110,39 +110,6 @@ class DefaultController extends AbstractController
         return $this->json([
             'cardinalPoint' => $cardinalName,
             'municipality' => $nearestMunicipality,
-        ]);
-    }
-
-    /**
-     * @throws Exception
-     */
-    #[Route(
-        '/community/{firstCommunity}/{secondCommunity}',
-        name: 'largestPopulationCommunity',
-        requirements: ['firstCommunity' => '\d+', 'secondCommunity' => '\d+'],
-        methods: ['GET', 'HEAD']
-    )]
-    public function getLargestPopulationCommunity(int $firstCommunity, int $secondCommunity): JsonResponse
-    {
-        $sqlProvinces = 'SELECT p.name, p.population FROM province p INNER JOIN community c ON (p.community_id = c.id) WHERE c.id = ';
-        $sqlCommunity = 'SELECT * FROM community WHERE id = ';
-
-        $firstProvincesPopulation = $this->getDatabaseResult($sqlProvinces . $firstCommunity);
-        $secondProvincesPopulation = $this->getDatabaseResult($sqlProvinces . $secondCommunity);
-
-        $firstCommunityPopulation = 0;
-        $secondCommunityPopulation = 0;
-        foreach ($firstProvincesPopulation as $firstProvincePopulation) {
-            $firstCommunityPopulation += (int)$firstProvincePopulation['population'];
-        }
-        foreach ($secondProvincesPopulation as $secondProvincePopulation) {
-            $secondCommunityPopulation += (int)$secondProvincePopulation['population'];
-        }
-
-        $sqlCommunity .= ($firstCommunityPopulation > $secondCommunityPopulation) ? $firstCommunity : $secondCommunity;
-
-        return $this->json([
-            'community' => $this->getDatabaseResult($sqlCommunity)
         ]);
     }
 
