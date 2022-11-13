@@ -1,0 +1,32 @@
+nearest_municipality_to_cardinal:
+    path: /municipality/{cardinal}
+    controller: App\Controller\DefaultController::getNearestMunicipalityToCardinal
+    requirements:
+        cardinal: 'n|s|e|w'
+    methods: [GET]
+
+api_get_municipalities:
+    path: /municipality
+    controller: App\Controller\DefaultController::getMunicipalities
+    methods: [GET]
+
+api_save_municipality:
+    path: /municipality
+    controller: App\Controller\DefaultController::saveMunicipality
+    methods: [POST]
+    options:
+        expose: true
+
+api_delete_municipality:
+    path: /municipality/{idMunicipality}
+    controller: App\Controller\DefaultController::deleteMunicipality
+    methods: [DELETE]
+    requirements:
+        idMunicipality: '\d+'
+    options:
+        expose: true
+
+api_provinces_percentage:
+    path: /provinces/percentage
+    controller: App\Controller\DefaultController::getPercentageByProvince
+    methods: [GET]

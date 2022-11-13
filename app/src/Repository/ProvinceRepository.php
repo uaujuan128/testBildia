@@ -20,4 +20,40 @@ class ProvinceRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Province::class);
     }
+
+    public function getTotalPopulationFromProvinces(array $provincesIds): array
+    {
+        $result = $this->_em->createQueryBuilder()
+            ->select('SUM(m.population) as total_population')
+            ->from(Province::class, 'm')
+            ->andWhere('m.id IN (:provinces)')
+            ->setParameter('provinces', $provincesIds);
+        ;
+
+        return $result->getQuery()->getArrayResult();
+    }
+
+    public function getTotalPopulation(): array
+    {
+
+        $result = $this->_em->createQueryBuilder()
+            ->select('SUM(m.population) as total_population')
+            ->from(Province::class, 'm')
+        ;
+
+        return $result->getQuery()->getArrayResult();
+    }
+
+    public function getProvincesNames(array $provincesIds): array
+    {
+
+        $result = $this->_em->createQueryBuilder()
+            ->select('m.name')
+            ->from(Province::class, 'm')
+            ->andWhere('m.id IN (:provinces)')
+            ->setParameter('provinces', $provincesIds);
+        ;
+
+        return $result->getQuery()->getScalarResult();
+    }
 }

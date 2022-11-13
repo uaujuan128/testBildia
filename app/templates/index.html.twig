@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width">
+        <title>Bildia test</title>
+        <!-- Bootstrap -->
+        <link rel="stylesheet" href="{{ asset('assets/css/bootstrap.min.css') }}" />
+        <!-- Main CSS file -->
+        <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}" />
+    </head>
+
+    <body>
+        <header class="text-center my-4">
+            <h1>Bildia test</h1>
+        </header>
+
+        <section class="container">
+            <div class="mb-3">
+                <img class="save-municipality-open" src="{{ asset('assets/image/square-plus-solid.svg') }}" alt="open">
+                <label class="font-weight-bold">Add municipality</label>
+            </div>
+
+            <div class="table-responsive mb-4">
+                <table class="table municipalities-list mx-auto">
+                    <tr>
+                        <th>Slug</th>
+                        <th>Name</th>
+                        <th>Latitude</th>
+                        <th>Longitude</th>
+                        <th>Provincia</th>
+                        <th>Acciones</th>
+                    </tr>
+
+                    {% for municipality in municipalities %}
+                        <tr>
+                            <td>{{ municipality.slug }}</td>
+                            <td>{{ municipality.name }}</td>
+                            <td>{{ municipality.latitude }}</td>
+                            <td>{{ municipality.longitude }}</td>
+                            <td>{{ municipality.province.name }}</td>
+                            <td>
+                                <label class="delete-municipality" data-municipality-id="{{ municipality.id }}">Borrar</label>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </table>
+
+                {% include 'pagination.html.twig' with {
+                    currentFilters: app.request.query.all,
+                    paginationPath: 'index',
+                    lastPage: (municipalities|length / maxResults)|round(0, 'ceil')
+                } only %}
+            </div>
+
+            <div class="save-municipality-form">
+                <img class="save-municipality-close" src="{{ asset('assets/image/circle-xmark-solid.svg') }}" alt="close">
+
+                <h2 class="mb-3">New municipality</h2>
+
+                <form>
+                    <div class="form-group">
+                        <label for="slug">Slug:</label>
+                        <input type="text" class="form-control" id="slug" name="slug" value="test">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="name">Name:</label>
+                        <input type="text" class="form-control" id="name" name="name" value="Test">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="latitude">Latitude:</label>
+                        <input type="number" class="form-control" id="latitude" name="latitude" value="1.1">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="longitude">Longitude:</label>
+                        <input type="number" class="form-control" id="longitude" name="longitude" value="1.2">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="province">Province:</label>
+
+                        <select name="province" class="form-control" id="province">
+                            {% for province in provinces %}
+                                <option value="{{ province.id }}">{{ province.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary save-municipality">Guardar</button>
+                    <img class="save-municipality-loading" src="{{ asset('assets/image/loading.gif') }}" alt="close">
+                </form>
+            </div>
+        </section>
+
+        <script src="{{ asset('assets/js/jquery-3.6.1.min.js') }}" ></script>
+        <script>
+            (function($) {
+                'use strict';
+
+                // Botón para borrar municipio. Se recoge el valor municipality-id para enviar a la API la id del municipio que queremos borrar
+                $('.delete-municipality').click(function() {
+                    $.ajax({
+                        context: this,
+                        url: 'api/municipality/' + $(this).data('municipality-id'),
+                        type: 'DELETE',
+                        dataType: 'JSON',
+                        beforeSend: function() {
+                            // Mostramos una animación para indicar al usuario que se está esperando respuesta del servidor y evitar que pulse otra vez
+                            let $saveMunicipalityLoading = $('.save-municipality-loading');
+                            $saveMunicipalityLoading.show();
+                            $saveMunicipalityLoading.clone().insertAfter($(this));
+                            $(this).hide();
+                        },
+                        success: function (response) {
+                            // Mostramos mensaje de confirmación y recargamos la página para que se vean los registros actualizados
+                            alert(response.status);
+                            location.reload();
+                        }
+                    });
+                });
+
+                // Botón para crear un nuevo municipio recogiendo los
+                $('.save-municipality').click(function() {
+                    event.preventDefault();
+
+                    let data = {
+                        'slug': $('input[name ="slug"]').val(),
+                        'name': $('input[name ="name"]').val(),
+                        'latitude': $('input[name ="latitude"]').val(),
+                        'longitude': $('input[name ="longitude"]').val(),
+                        'province': $('select[name ="province"]').val()
+                    };
+
+                    $.ajax({
+                        context: this,
+                        url: "{{ path('api_save_municipality') }}",
+                        type: 'POST',
+                        dataType: 'JSON',
+                        data: data,
+                        beforeSend: function() {
+                            // Mostramos una animación para indicar al usuario que se está esperando respuesta del servidor y evitar que pulse otra vez
+                            $('.save-municipality-loading').show();
+                        },
+                        success: function (response) {
+                            /// Mostramos mensaje de confirmación y recargamos la página para que se vean los registros actualizados
+                            $('.save-municipality-loading').hide();
+                            alert(response.status);
+                            location.reload();
+                        },
+                    });
+                });
+
+                // Abrimos o cerramos el panel flotante en el que está el formulario para añadir un municipio
+                $('.save-municipality-open, .save-municipality-close').click(function () {
+                    let $saveMunicipalityForm = $('.save-municipality-form');
+
+                    ($saveMunicipalityForm.is(":visible")) ? $saveMunicipalityForm.hide(200) : $saveMunicipalityForm.show(200);
+                });
+            })(jQuery);
+        </script>
+    </body>
+</html>

@@ -1,0 +1,64 @@
+/* Section container */
+section.container {
+    max-width: 1100px;
+    margin: auto;
+    position: relative;
+}
+
+/* Municipalities table */
+.delete-municipality {
+    color: red;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* Pagination bar */
+.pagination-bar .page-item.active .page-link {
+    background-color: #0069d9;
+    border-color: #0069d9;
+}
+
+.pagination-bar .page-item .page-link {
+    font-size: 15px;
+}
+
+.pagination-bar .page-link {
+    color: #0069d9;
+}
+
+/* Save municipality form */
+.save-municipality-form {
+    z-index: 1;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    padding: 30px;
+    transform: translate(-50%, -50%);
+    background-color: rgb(255, 255, 255);
+    width: 400px;
+    box-shadow: 4px 4px 20px 5px #afafaf;
+    border-radius: 15px;
+    display: none;
+}
+
+.save-municipality-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+}
+
+.save-municipality-open, .delete-municipality {
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+}
+
+.save-municipality-loading {
+    display: none;
+    width: 35px;
+    height: 35px;
+    margin-left: 5px;
+}
